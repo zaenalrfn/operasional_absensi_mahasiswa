@@ -11,24 +11,30 @@ class StudentCoursesSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::first(); // ambil user pertama
+        // Ambil semua mahasiswa
+        $students = User::role('mahasiswa')->get();
+
+        // Ambil semua courses
         $courses = Course::all();
 
-        $studentCoursesData = [
-            ['course_index' => 2, 'hari' => 'Kamis', 'jam_mulai' => '12:50:00', 'jam_selesai' => '15:20:00', 'ruangan' => 'K1 - D.0.2'],
-            ['course_index' => 0, 'hari' => 'Senin', 'jam_mulai' => '12:50:00', 'jam_selesai' => '15:20:00', 'ruangan' => 'K1 - E.0.1'],
-            ['course_index' => 1, 'hari' => 'Rabu', 'jam_mulai' => '07:00:00', 'jam_selesai' => '08:40:00', 'ruangan' => 'K1 - D.0.2'],
-        ];
-
-        foreach ($studentCoursesData as $sc) {
-            StudentCourse::create([
-                'user_id' => $user->id,
-                'course_id' => $courses[$sc['course_index']]->id,
-                'hari' => $sc['hari'],
-                'jam_mulai' => $sc['jam_mulai'],
-                'jam_selesai' => $sc['jam_selesai'],
-                'ruangan' => $sc['ruangan'],
-            ]);
+        if ($students->isEmpty() || $courses->isEmpty()) {
+            $this->command->info('Tidak ada mahasiswa atau course untuk di-seed.');
+            return;
         }
+
+        foreach ($students as $student) {
+            foreach ($courses as $course) {
+                StudentCourse::create([
+                    'user_id' => $student->id,
+                    'course_id' => $course->id,
+                    'hari' => $course->hari,
+                    'jam_mulai' => $course->jam_mulai,
+                    'jam_selesai' => $course->jam_selesai,
+                    'ruangan' => 'Lab ' . rand(1, 5), // bisa diubah sesuai kebutuhan
+                ]);
+            }
+        }
+
+        $this->command->info('Semua mahasiswa berhasil diberikan semua course!');
     }
 }

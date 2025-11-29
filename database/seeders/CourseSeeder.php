@@ -19,11 +19,21 @@ class CourseSeeder extends Seeder
             ['kode_mk' => '203509-23', 'nama_mk' => 'Desain Front-end', 'sks' => 3, 'kelas' => 'A', 'hari' => 'Kamis', 'jam_mulai' => '12:50:00', 'jam_selesai' => '15:20:00', 'semester' => 5],
             ['kode_mk' => '203516-23', 'nama_mk' => 'Pengembangan Aplikasi Mobile (RPL)', 'sks' => 3, 'kelas' => 'A', 'hari' => 'Kamis', 'jam_mulai' => '15:30:00', 'jam_selesai' => '18:00:00', 'semester' => 5],
             ['kode_mk' => '203507-23', 'nama_mk' => 'Bisnis Digital', 'sks' => 2, 'kelas' => 'B', 'hari' => 'Kamis', 'jam_mulai' => '10:40:00', 'jam_selesai' => '12:20:00', 'semester' => 5],
+            ['kode_mk' => '203515-23', 'nama_mk' => 'Mobile & We Service Praktik', 'sks' => 2, 'kelas' => 'II', 'hari' => "Jum'at", 'jam_mulai' => '07:00:00', 'jam_selesai' => '10:30:00', 'semester' => 5],
+            ['kode_mk' => '203508-23', 'nama_mk' => 'Metodologi Penelitian', 'sks' => 2, 'kelas' => 'B', 'hari' => "Jum'at", 'jam_mulai' => '12:50:00', 'jam_selesai' => '14:30:00', 'semester' => 5],
+            ['kode_mk' => '203510-23', 'nama_mk' => 'Pengantar Big Data', 'sks' => 3, 'kelas' => 'B', 'hari' => 'Selasa', 'jam_mulai' => '09:40:00', 'jam_selesai' => '12:10:00', 'semester' => 5],
         ];
 
         foreach ($coursesData as $index => $course) {
+            // Ambil dosen secara siklik dari tabel lectures
             $course['dosen_id'] = $lectures[$index % $dosenCount]->id;
+
+            // Set id integer
+            $course['id'] = $index + 1;
+
             Course::create($course);
         }
+
+        $this->command->info('Courses berhasil di-seed lengkap dengan dosen_id dari Lectures.');
     }
 }
