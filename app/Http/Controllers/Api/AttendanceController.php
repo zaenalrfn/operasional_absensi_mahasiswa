@@ -26,4 +26,25 @@ class AttendanceController extends Controller
 
         return response()->json($attendances);
     }
+
+    /**
+     * POST /api/attendances
+     * Menyimpan data absensi baru
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'course_id' => 'required|exists:courses,id',
+            'tanggal' => 'required|date',
+            'status' => 'required|in:hadir,izin,sakit,alpha',
+            'method' => 'required|in:manual,face_recognition',
+            'photo_capture' => 'nullable|string',
+            'verified' => 'boolean',
+        ]);
+
+        $attendance = Attendence::create($validated);
+
+        return response()->json($attendance, 201);
+    }
 }
