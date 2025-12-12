@@ -14,14 +14,39 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { BookOpen, ClipboardCheck, ClipboardList, Folder, GraduationCap, LayoutGrid, Users } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: '/dashboard',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Manajemen Absensi',
+        href: '/lecture/attendance',
+        icon: ClipboardCheck,
+    },
+    {
+        title: 'Dosen',
+        href: '/lectures',
+        icon: Users,
+    },
+    {
+        title: 'Mata Kuliah',
+        href: '/courses',
+        icon: BookOpen,
+    },
+    {
+        title: 'Mahasiswa',
+        href: '/students',
+        icon: GraduationCap,
+    },
+    {
+        title: 'KRS (Mahasiswa)',
+        href: '/student/course-registration',
+        icon: ClipboardList,
     },
 ];
 

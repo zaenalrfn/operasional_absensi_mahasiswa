@@ -9,6 +9,7 @@ class Course extends Model
     protected $fillable = [
         'kode_mk',
         'nama_mk',
+        'jurusan',
         'dosen_id',
         'sks',
         'kelas',
