@@ -14,14 +14,14 @@ class CourseSeeder extends Seeder
         $dosenCount = $lectures->count();
 
         $coursesData = [
-            ['kode_mk' => '203514-23', 'nama_mk' => 'Mobile & Web Service (RPL)', 'sks' => 3, 'kelas' => 'B', 'hari' => 'Senin', 'jam_mulai' => '12:50:00', 'jam_selesai' => '15:20:00', 'semester' => 5],
-            ['kode_mk' => '203501-23', 'nama_mk' => 'Agama Islam', 'sks' => 2, 'kelas' => 'B', 'hari' => 'Rabu', 'jam_mulai' => '07:00:00', 'jam_selesai' => '08:40:00', 'semester' => 5],
-            ['kode_mk' => '203509-23', 'nama_mk' => 'Desain Front-end', 'sks' => 3, 'kelas' => 'A', 'hari' => 'Kamis', 'jam_mulai' => '12:50:00', 'jam_selesai' => '15:20:00', 'semester' => 5],
-            ['kode_mk' => '203516-23', 'nama_mk' => 'Pengembangan Aplikasi Mobile (RPL)', 'sks' => 3, 'kelas' => 'A', 'hari' => 'Kamis', 'jam_mulai' => '15:30:00', 'jam_selesai' => '18:00:00', 'semester' => 5],
-            ['kode_mk' => '203507-23', 'nama_mk' => 'Bisnis Digital', 'sks' => 2, 'kelas' => 'B', 'hari' => 'Kamis', 'jam_mulai' => '10:40:00', 'jam_selesai' => '12:20:00', 'semester' => 5],
-            ['kode_mk' => '203515-23', 'nama_mk' => 'Mobile & We Service Praktik', 'sks' => 2, 'kelas' => 'II', 'hari' => "Jum'at", 'jam_mulai' => '07:00:00', 'jam_selesai' => '10:30:00', 'semester' => 5],
-            ['kode_mk' => '203508-23', 'nama_mk' => 'Metodologi Penelitian', 'sks' => 2, 'kelas' => 'B', 'hari' => "Jum'at", 'jam_mulai' => '12:50:00', 'jam_selesai' => '14:30:00', 'semester' => 5],
-            ['kode_mk' => '203510-23', 'nama_mk' => 'Pengantar Big Data', 'sks' => 3, 'kelas' => 'B', 'hari' => 'Selasa', 'jam_mulai' => '09:40:00', 'jam_selesai' => '12:10:00', 'semester' => 5],
+            ['kode_mk' => '203514-23', 'nama_mk' => 'Mobile & Web Service (RPL)', 'sks' => 3, 'kelas' => 'B', 'hari' => 'Senin', 'jam_mulai' => '12:50:00', 'jam_selesai' => '15:20:00', 'semester' => 5, 'jurusan' => 'Teknik Informatika'],
+            ['kode_mk' => '203501-23', 'nama_mk' => 'Agama Islam', 'sks' => 2, 'kelas' => 'B', 'hari' => 'Rabu', 'jam_mulai' => '07:00:00', 'jam_selesai' => '08:40:00', 'semester' => 5, 'jurusan' => 'Teknik Informatika'],
+            ['kode_mk' => '203509-23', 'nama_mk' => 'Desain Front-end', 'sks' => 3, 'kelas' => 'A', 'hari' => 'Kamis', 'jam_mulai' => '12:50:00', 'jam_selesai' => '15:20:00', 'semester' => 5, 'jurusan' => 'Teknik Informatika'],
+            ['kode_mk' => '203516-23', 'nama_mk' => 'Pengembangan Aplikasi Mobile (RPL)', 'sks' => 3, 'kelas' => 'A', 'hari' => 'Kamis', 'jam_mulai' => '15:30:00', 'jam_selesai' => '18:00:00', 'semester' => 5, 'jurusan' => 'Teknik Informatika'],
+            ['kode_mk' => '203507-23', 'nama_mk' => 'Bisnis Digital', 'sks' => 2, 'kelas' => 'B', 'hari' => 'Kamis', 'jam_mulai' => '10:40:00', 'jam_selesai' => '12:20:00', 'semester' => 5, 'jurusan' => 'Sistem Informasi'],
+            ['kode_mk' => '203515-23', 'nama_mk' => 'Mobile & We Service Praktik', 'sks' => 2, 'kelas' => 'II', 'hari' => "Jum'at", 'jam_mulai' => '07:00:00', 'jam_selesai' => '10:30:00', 'semester' => 5, 'jurusan' => 'Teknik Informatika'],
+            ['kode_mk' => '203508-23', 'nama_mk' => 'Metodologi Penelitian', 'sks' => 2, 'kelas' => 'B', 'hari' => "Jum'at", 'jam_mulai' => '12:50:00', 'jam_selesai' => '14:30:00', 'semester' => 5, 'jurusan' => 'Teknik Informatika'],
+            ['kode_mk' => '203510-23', 'nama_mk' => 'Pengantar Big Data', 'sks' => 3, 'kelas' => 'B', 'hari' => 'Selasa', 'jam_mulai' => '09:40:00', 'jam_selesai' => '12:10:00', 'semester' => 5, 'jurusan' => 'Sistem Informasi'],
         ];
 
         foreach ($coursesData as $index => $course) {
