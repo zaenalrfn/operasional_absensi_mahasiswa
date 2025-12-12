@@ -253,6 +253,58 @@ class RolePermissionSeeder extends Seeder
         ]);
         $mahasiswa5->assignRole('mahasiswa');
 
+        $mahasiswa6 = User::create([
+            'id' => 9,
+            'nim' => '5231811026',
+            'name' => 'Ulfah Nafiah',
+            'email' => 'ulfahnafiah@university.ac.id',
+            'password' => Hash::make('5231811026_Ulfah'),
+            'program_studi' => 'Sains Data',
+            'semester' => 5,
+            'kelas' => 'A',
+            'photo_url' => null,
+        ]);
+        $mahasiswa6->assignRole('mahasiswa');
+
+        $mahasiswa7 = User::create([
+            'id' => 10,
+            'nim' => '5231811014',
+            'name' => 'Dian Eka Pratiwi',
+            'email' => 'dianekapratiwi@university.ac.id',
+            'password' => Hash::make('5231811014_Dian'),
+            'program_studi' => 'Sains Data',
+            'semester' => 5,
+            'kelas' => 'A',
+            'photo_url' => null,
+        ]);
+        $mahasiswa7->assignRole('mahasiswa');
+
+        $mahasiswa8 = User::create([
+            'id' => 11,
+            'nim' => '5231811035',
+            'name' => 'Yogi Hanusanjaya',
+            'email' => 'yogihanusanjaya@university.ac.id',
+            'password' => Hash::make('5231811035_Yogi'),
+            'program_studi' => 'Sains Data',
+            'semester' => 5,
+            'kelas' => 'A',
+            'photo_url' => null,
+        ]);
+        $mahasiswa8->assignRole('mahasiswa');
+
+        $mahasiswa8 = User::create([
+            'id' => 12,
+            'nim' => '5231811008',
+            'name' => 'Sophia Febyiena M',
+            'email' => 'sophiafebyiena@university.ac.id',
+            'password' => Hash::make('5231811008_Sophia'),
+            'program_studi' => 'Sains Data',
+            'semester' => 5,
+            'kelas' => 'A',
+            'photo_url' => null,
+        ]);
+        $mahasiswa8->assignRole('mahasiswa');
+
         $this->command->info('Default roles, permissions, and users created successfully!');
         $this->command->info('Super Admin: superadmin@university.ac.id / password123');
         $this->command->info('Admin: admin@university.ac.id / password123');
