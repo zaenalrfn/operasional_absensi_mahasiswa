@@ -71,17 +71,17 @@ class RolePermissionSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission, 'guard_name' => 'web']);
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
         // ==================== CREATE ROLES ====================
 
         // Super Admin Role - All permissions
-        $superAdminRole = Role::create(['name' => 'super-admin', 'guard_name' => 'web']);
-        $superAdminRole->givePermissionTo(Permission::all());
+        $superAdminRole = Role::firstOrCreate(['name' => 'super-admin', 'guard_name' => 'web']);
+        $superAdminRole->syncPermissions(Permission::all());
 
         // Admin Role - Most administrative permissions
-        $adminRole = Role::create(['name' => 'admin', 'guard_name' => 'web']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $adminPermissions = [
             'attendance.view_any',
             'attendance.update',
@@ -115,11 +115,11 @@ class RolePermissionSeeder extends Seeder
             'system.settings',
             'system.backup',
         ];
-        $adminRole->givePermissionTo($adminPermissions);
+        $adminRole->syncPermissions($adminPermissions);
 
 
         // Mahasiswa Role - Student permissions
-        $mahasiswaRole = Role::create(['name' => 'mahasiswa', 'guard_name' => 'web']);
+        $mahasiswaRole = Role::firstOrCreate(['name' => 'mahasiswa', 'guard_name' => 'web']);
         $mahasiswaPermissions = [
             'attendance.view_own',
             'attendance.create',
@@ -131,7 +131,19 @@ class RolePermissionSeeder extends Seeder
             'user.view_own',
             'user.update',
         ];
-        $mahasiswaRole->givePermissionTo($mahasiswaPermissions);
+        $mahasiswaRole->syncPermissions($mahasiswaPermissions);
+
+        // Dosen Role - Lecturer permissions
+        $dosenRole = Role::firstOrCreate(['name' => 'dosen', 'guard_name' => 'web']);
+        $dosenPermissions = [
+            'attendance.view_any',
+            'attendance.update',
+            'attendance.verify',
+            'lecturer.view_any',
+            'course.view_any',
+            'student.view_any',
+        ];
+        $dosenRole->syncPermissions($dosenPermissions);
 
         // ==================== CREATE DEFAULT USERS ====================
 
@@ -141,168 +153,227 @@ class RolePermissionSeeder extends Seeder
     private function createDefaultUsers()
     {
         // Super Admin User
-        $superAdmin = User::create([
-            'id' => 1,
-            'nim' => 'SUPER001',
-            'name' => 'Super Administrator',
-            'email' => 'superadmin@university.ac.id',
-            'password' => Hash::make('password123'),
-            'program_studi' => 'Teknik Informatika',
-            'semester' => 1,
-            'kelas' => 'A',
-            'photo_url' => null,
-        ]);
+        $superAdmin = User::firstOrCreate(
+            ['email' => 'superadmin@university.ac.id'],
+            [
+                'id' => 1,
+                'nim' => 'SUPER001',
+                'name' => 'Super Administrator',
+                'password' => Hash::make('password123'),
+                'program_studi' => 'Teknik Informatika',
+                'semester' => 1,
+                'kelas' => 'A',
+                'photo_url' => null,
+            ]
+        );
         $superAdmin->assignRole('super-admin');
 
         // Admin User
-        $admin = User::create([
-            'id' => 2,
-            'nim' => 'ADMIN001',
-            'name' => 'Administrator',
-            'email' => 'admin@university.ac.id',
-            'password' => Hash::make('password123'),
-            'program_studi' => 'Sistem Informasi',
-            'semester' => 1,
-            'kelas' => 'A',
-            'photo_url' => null,
-        ]);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@university.ac.id'],
+            [
+                'id' => 2,
+                'nim' => 'ADMIN001',
+                'name' => 'Administrator',
+                'password' => Hash::make('password123'),
+                'program_studi' => 'Sistem Informasi',
+                'semester' => 1,
+                'kelas' => 'A',
+                'photo_url' => null,
+            ]
+        );
         $admin->assignRole('admin');
 
-        // Dosen Users
-        Lectures::create([
-            'id' => 1,
-            'name' => 'Prof. Dr. Ahmad Santoso, M.Kom.',
-            'email' => 'ahmad.santoso@university.ac.id',
-        ]);
+        // Dosen Users (legacy lectures table)
+        Lectures::firstOrCreate(
+            ['email' => 'ahmad.santoso@university.ac.id'],
+            [
+                'id' => 1,
+                'name' => 'Prof. Dr. Ahmad Santoso, M.Kom.',
+            ]
+        );
 
-        Lectures::create([
-            'id' => 2,
-            'name' => 'Dr. Siti Rahayu, M.T.',
-            'email' => 'siti.rahayu@university.ac.id',
-        ]);
+        Lectures::firstOrCreate(
+            ['email' => 'siti.rahayu@university.ac.id'],
+            [
+                'id' => 2,
+                'name' => 'Dr. Siti Rahayu, M.T.',
+            ]
+        );
 
-        Lectures::create([
-            'id' => 3,
-            'name' => 'Dewi Anggraeni, M.Kom.',
-            'email' => 'dewi.anggraeni@university.ac.id',
-        ]);
+        Lectures::firstOrCreate(
+            ['email' => 'dewi.anggraeni@university.ac.id'],
+            [
+                'id' => 3,
+                'name' => 'Dewi Anggraeni, M.Kom.',
+            ]
+        );
+
+        // Dosen Users (agar bisa login)
+        $dosen1 = User::firstOrCreate(
+            ['email' => 'ahmad.santoso@university.ac.id'],
+            [
+                'id' => 20, // ID distinct
+                'nim' => 'DOSEN001',
+                'name' => 'Prof. Dr. Ahmad Santoso, M.Kom.',
+                'password' => Hash::make('password123'),
+                'program_studi' => 'Teknik Informatika',
+                'semester' => 0,
+                'kelas' => '-',
+                'photo_url' => null,
+            ]
+        );
+        $dosen1->assignRole('dosen');
+
+        $dosen2 = User::firstOrCreate(
+            ['email' => 'siti.rahayu@university.ac.id'],
+            [
+                'id' => 21,
+                'nim' => 'DOSEN002',
+                'name' => 'Dr. Siti Rahayu, M.T.',
+                'password' => Hash::make('password123'),
+                'program_studi' => 'Sistem Informasi',
+                'semester' => 0,
+                'kelas' => '-',
+                'photo_url' => null,
+            ]
+        );
+        $dosen2->assignRole('dosen');
 
         // Sample Mahasiswa Users
-        $mahasiswa1 = User::create([
-            'id' => 4,
-            'nim' => '202101001',
-            'name' => 'Budi Santoso',
-            'email' => 'budi.santoso@university.ac.id',
-            'password' => Hash::make('password123'),
-            'program_studi' => 'Teknik Informatika',
-            'semester' => 3,
-            'kelas' => 'TI-3A',
-            'photo_url' => null,
-        ]);
+        $mahasiswa1 = User::firstOrCreate(
+            ['email' => 'budi.santoso@university.ac.id'],
+            [
+                'id' => 4,
+                'nim' => '202101001',
+                'name' => 'Budi Santoso',
+                'password' => Hash::make('password123'),
+                'program_studi' => 'Teknik Informatika',
+                'semester' => 3,
+                'kelas' => 'TI-3A',
+                'photo_url' => null,
+            ]
+        );
         $mahasiswa1->assignRole('mahasiswa');
 
-        $mahasiswa2 = User::create([
-            'id' => 5,
-            'nim' => '202101002',
-            'name' => 'Sari Indah',
-            'email' => 'sari.indah@university.ac.id',
-            'password' => Hash::make('password123'),
-            'program_studi' => 'Sistem Informasi',
-            'semester' => 3,
-            'kelas' => 'SI-3B',
-            'photo_url' => null,
-        ]);
+        $mahasiswa2 = User::firstOrCreate(
+            ['email' => 'sari.indah@university.ac.id'],
+            [
+                'id' => 5,
+                'nim' => '202101002',
+                'name' => 'Sari Indah',
+                'password' => Hash::make('password123'),
+                'program_studi' => 'Sistem Informasi',
+                'semester' => 3,
+                'kelas' => 'SI-3B',
+                'photo_url' => null,
+            ]
+        );
         $mahasiswa2->assignRole('mahasiswa');
 
-        $mahasiswa3 = User::create([
-            'id' => 6,
-            'nim' => '202101003',
-            'name' => 'Rizki Pratama',
-            'email' => 'rizki.pratama@university.ac.id',
-            'password' => Hash::make('password123'),
-            'program_studi' => 'Teknik Komputer',
-            'semester' => 5,
-            'kelas' => 'TK-5A',
-            'photo_url' => null,
-        ]);
+        $mahasiswa3 = User::firstOrCreate(
+            ['email' => 'rizki.pratama@university.ac.id'],
+            [
+                'id' => 6,
+                'nim' => '202101003',
+                'name' => 'Rizki Pratama',
+                'password' => Hash::make('password123'),
+                'program_studi' => 'Teknik Komputer',
+                'semester' => 5,
+                'kelas' => 'TK-5A',
+                'photo_url' => null,
+            ]
+        );
         $mahasiswa3->assignRole('mahasiswa');
 
-        $mahasiswa4 = User::create([
-            'id' => 7,
-            'nim' => '202101004',
-            'name' => 'Maya Sari',
-            'email' => 'maya.sari@university.ac.id',
-            'password' => Hash::make('password123'),
-            'program_studi' => 'Teknik Informatika',
-            'semester' => 3,
-            'kelas' => 'TI-3B',
-            'photo_url' => null,
-        ]);
+        $mahasiswa4 = User::firstOrCreate(
+            ['email' => 'maya.sari@university.ac.id'],
+            [
+                'id' => 7,
+                'nim' => '202101004',
+                'name' => 'Maya Sari',
+                'password' => Hash::make('password123'),
+                'program_studi' => 'Teknik Informatika',
+                'semester' => 3,
+                'kelas' => 'TI-3B',
+                'photo_url' => null,
+            ]
+        );
         $mahasiswa4->assignRole('mahasiswa');
 
-        $mahasiswa5 = User::create([
-            'id' => 8,
-            'nim' => '202101005',
-            'name' => 'Ari Wibowo',
-            'email' => 'ari.wibowo@university.ac.id',
-            'password' => Hash::make('password123'),
-            'program_studi' => 'Sistem Informasi',
-            'semester' => 5,
-            'kelas' => 'SI-5A',
-            'photo_url' => null,
-        ]);
+        $mahasiswa5 = User::firstOrCreate(
+            ['email' => 'ari.wibowo@university.ac.id'],
+            [
+                'id' => 8,
+                'nim' => '202101005',
+                'name' => 'Ari Wibowo',
+                'password' => Hash::make('password123'),
+                'program_studi' => 'Sistem Informasi',
+                'semester' => 5,
+                'kelas' => 'SI-5A',
+                'photo_url' => null,
+            ]
+        );
         $mahasiswa5->assignRole('mahasiswa');
 
-        $mahasiswa6 = User::create([
-            'id' => 9,
-            'nim' => '5231811026',
-            'name' => 'Ulfah Nafiah',
-            'email' => 'ulfahnafiah@university.ac.id',
-            'password' => Hash::make('5231811026_Ulfah'),
-            'program_studi' => 'Sains Data',
-            'semester' => 5,
-            'kelas' => 'A',
-            'photo_url' => null,
-        ]);
+        $mahasiswa6 = User::firstOrCreate(
+            ['email' => 'ulfahnafiah@university.ac.id'],
+            [
+                'id' => 9,
+                'nim' => '5231811026',
+                'name' => 'Ulfah Nafiah',
+                'password' => Hash::make('5231811026_Ulfah'),
+                'program_studi' => 'Sains Data',
+                'semester' => 5,
+                'kelas' => 'A',
+                'photo_url' => null,
+            ]
+        );
         $mahasiswa6->assignRole('mahasiswa');
 
-        $mahasiswa7 = User::create([
-            'id' => 10,
-            'nim' => '5231811014',
-            'name' => 'Dian Eka Pratiwi',
-            'email' => 'dianekapratiwi@university.ac.id',
-            'password' => Hash::make('5231811014_Dian'),
-            'program_studi' => 'Sains Data',
-            'semester' => 5,
-            'kelas' => 'A',
-            'photo_url' => null,
-        ]);
+        $mahasiswa7 = User::firstOrCreate(
+            ['email' => 'dianekapratiwi@university.ac.id'],
+            [
+                'id' => 10,
+                'nim' => '5231811014',
+                'name' => 'Dian Eka Pratiwi',
+                'password' => Hash::make('5231811014_Dian'),
+                'program_studi' => 'Sains Data',
+                'semester' => 5,
+                'kelas' => 'A',
+                'photo_url' => null,
+            ]
+        );
         $mahasiswa7->assignRole('mahasiswa');
 
-        $mahasiswa8 = User::create([
-            'id' => 11,
-            'nim' => '5231811035',
-            'name' => 'Yogi Hanusanjaya',
-            'email' => 'yogihanusanjaya@university.ac.id',
-            'password' => Hash::make('5231811035_Yogi'),
-            'program_studi' => 'Sains Data',
-            'semester' => 5,
-            'kelas' => 'A',
-            'photo_url' => null,
-        ]);
+        $mahasiswa8 = User::firstOrCreate(
+            ['email' => 'yogihanusanjaya@university.ac.id'],
+            [
+                'id' => 11,
+                'nim' => '5231811035',
+                'name' => 'Yogi Hanusanjaya',
+                'password' => Hash::make('5231811035_Yogi'),
+                'program_studi' => 'Sains Data',
+                'semester' => 5,
+                'kelas' => 'A',
+                'photo_url' => null,
+            ]
+        );
         $mahasiswa8->assignRole('mahasiswa');
 
-        $mahasiswa8 = User::create([
-            'id' => 12,
-            'nim' => '5231811008',
-            'name' => 'Sophia Febyiena M',
-            'email' => 'sophiafebyiena@university.ac.id',
-            'password' => Hash::make('5231811008_Sophia'),
-            'program_studi' => 'Sains Data',
-            'semester' => 5,
-            'kelas' => 'A',
-            'photo_url' => null,
-        ]);
+        $mahasiswa8 = User::firstOrCreate(
+            ['email' => 'sophiafebyiena@university.ac.id'],
+            [
+                'id' => 12,
+                'nim' => '5231811008',
+                'name' => 'Sophia Febyiena M',
+                'password' => Hash::make('5231811008_Sophia'),
+                'program_studi' => 'Sains Data',
+                'semester' => 5,
+                'kelas' => 'A',
+                'photo_url' => null,
+            ]
+        );
         $mahasiswa8->assignRole('mahasiswa');
 
         $this->command->info('Default roles, permissions, and users created successfully!');

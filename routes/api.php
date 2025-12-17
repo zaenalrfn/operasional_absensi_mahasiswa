@@ -23,5 +23,7 @@ Route::middleware('auth:sanctum')->get('/student-courses', [StudentCourseControl
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/courses', [CourseController::class, 'index']);
     Route::get('/attendances', [AttendanceController::class, 'index']);
+    Route::get('/attendances', [AttendanceController::class, 'index']);
     Route::post('/attendances', [AttendanceController::class, 'store']);
+    Route::get('/attendance-locations', [\App\Http\Controllers\AttendanceLocationController::class, 'apiIndex']);
 });

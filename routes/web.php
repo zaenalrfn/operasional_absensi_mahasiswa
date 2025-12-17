@@ -23,6 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('lectures', App\Http\Controllers\LectureController::class);
     Route::resource('courses', App\Http\Controllers\CourseController::class);
     Route::resource('students', App\Http\Controllers\StudentController::class);
+    Route::resource('attendance-locations', App\Http\Controllers\AttendanceLocationController::class);
 
     Route::get('/student/course-registration', [App\Http\Controllers\StudentCourseController::class, 'index'])->name('student.course-registration');
     Route::post('/student/course-registration', [App\Http\Controllers\StudentCourseController::class, 'store'])->name('student.course-registration.store');

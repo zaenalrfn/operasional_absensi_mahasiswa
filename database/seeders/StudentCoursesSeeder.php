@@ -24,14 +24,17 @@ class StudentCoursesSeeder extends Seeder
 
         foreach ($students as $student) {
             foreach ($courses as $course) {
-                StudentCourse::create([
-                    'user_id' => $student->id,
-                    'course_id' => $course->id,
-                    'hari' => $course->hari,
-                    'jam_mulai' => $course->jam_mulai,
-                    'jam_selesai' => $course->jam_selesai,
-                    'ruangan' => 'Lab ' . rand(1, 5), // bisa diubah sesuai kebutuhan
-                ]);
+                // Check if course matches student's jurusan and semester
+                if ($course->jurusan === $student->program_studi && $course->semester == $student->semester) {
+                    StudentCourse::create([
+                        'user_id' => $student->id,
+                        'course_id' => $course->id,
+                        'hari' => $course->hari,
+                        'jam_mulai' => $course->jam_mulai,
+                        'jam_selesai' => $course->jam_selesai,
+                        'ruangan' => 'Lab ' . rand(1, 5),
+                    ]);
+                }
             }
         }
 
