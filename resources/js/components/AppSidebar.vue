@@ -14,10 +14,16 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, ClipboardCheck, ClipboardList, Folder, GraduationCap, LayoutGrid, Users } from 'lucide-vue-next';
+import { BookOpen, ClipboardCheck, ClipboardList, Folder, GraduationCap, LayoutGrid, MapPin, Users } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+
+const allNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: '/dashboard',
@@ -32,6 +38,11 @@ const mainNavItems: NavItem[] = [
         title: 'Dosen',
         href: '/lectures',
         icon: Users,
+    },
+    {
+        title: 'Lokasi Absensi',
+        href: '/attendance-locations',
+        icon: MapPin,
     },
     {
         title: 'Mata Kuliah',
@@ -49,6 +60,33 @@ const mainNavItems: NavItem[] = [
         icon: ClipboardList,
     },
 ];
+
+const mainNavItems = computed(() => {
+    // @ts-ignore
+    const roles = user.value?.roles || [];
+    
+    if (roles.includes('super-admin')) {
+        return allNavItems;
+    }
+
+    if (roles.includes('admin')) {
+        return allNavItems.filter(item => item.title !== 'Lokasi Absensi');
+    }
+
+    if (roles.includes('dosen')) {
+        return allNavItems.filter(item => 
+            ['Dashboard', 'Manajemen Absensi', 'Dosen'].includes(item.title)
+        );
+    }
+
+    if (roles.includes('mahasiswa')) {
+        return allNavItems.filter(item => 
+            ['Dashboard', 'KRS (Mahasiswa)'].includes(item.title)
+        );
+    }
+
+    return [];
+});
 
 const footerNavItems: NavItem[] = [
     {

@@ -16,8 +16,11 @@ class StudentCourseController extends Controller
             ->orderBy('semester')
             ->orderBy('nama_mk');
 
-        if ($request->filled('jurusan')) {
-            $query->where('jurusan', $request->jurusan);
+        $user = Auth::user();
+
+        // Filter by user's Program Studi
+        if ($user->program_studi) {
+            $query->where('jurusan', $user->program_studi);
         }
 
         if ($request->filled('angkatan')) {
