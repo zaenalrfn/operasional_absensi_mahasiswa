@@ -242,14 +242,14 @@ class RolePermissionSeeder extends Seeder
 
         // Sample Mahasiswa Users
         $mahasiswa1 = User::firstOrCreate(
-            ['email' => 'budi.santoso@university.ac.id'],
+            ['email' => 'zaenularifinputrakembar@gmail.com'],
             [
                 'id' => 4,
                 'nim' => '202101001',
-                'name' => 'Budi Santoso',
+                'name' => 'Zaenal Arifin',
                 'password' => Hash::make('password123'),
                 'program_studi' => 'Teknik Informatika',
-                'semester' => 3,
+                'semester' => 5,
                 'kelas' => 'TI-3A',
                 'photo_url' => null,
             ]
@@ -264,7 +264,7 @@ class RolePermissionSeeder extends Seeder
                 'name' => 'Sari Indah',
                 'password' => Hash::make('password123'),
                 'program_studi' => 'Sistem Informasi',
-                'semester' => 3,
+                'semester' => 5,
                 'kelas' => 'SI-3B',
                 'photo_url' => null,
             ]
@@ -294,7 +294,7 @@ class RolePermissionSeeder extends Seeder
                 'name' => 'Maya Sari',
                 'password' => Hash::make('password123'),
                 'program_studi' => 'Teknik Informatika',
-                'semester' => 3,
+                'semester' => 5,
                 'kelas' => 'TI-3B',
                 'photo_url' => null,
             ]

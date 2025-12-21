@@ -14,6 +14,7 @@ Route::get('/current-user', function (Request $request) {
 
 // Authentication Routes
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/reset-password', [\App\Http\Controllers\Api\ResetPasswordController::class, 'reset']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 // Student Courses Routes
