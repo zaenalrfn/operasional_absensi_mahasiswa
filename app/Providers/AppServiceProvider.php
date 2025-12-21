@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // FORCE FIX: Use log driver to prevent 127.0.0.1 connection error on real device
+        config(['mail.default' => 'log']);
     }
 }
