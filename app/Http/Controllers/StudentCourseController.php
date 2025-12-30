@@ -28,6 +28,10 @@ class StudentCourseController extends Controller
             $query->where('kode_mk', 'LIKE', "%-{$angkatanSuffix}");
         }
 
+        if ($request->filled('semester')) {
+            $query->where('semester', $request->semester);
+        }
+
         $courses = $query->get()
             ->map(function ($course) {
                 $course->is_registered = StudentCourse::where('user_id', Auth::id())
@@ -38,17 +42,23 @@ class StudentCourseController extends Controller
             ->groupBy('semester');
 
         // Get unique jurusans for the filter dropdown
-        $jurusans = Course::select('jurusan')
-            ->distinct()
-            ->whereNotNull('jurusan')
-            ->where('jurusan', '!=', '')
-            ->orderBy('jurusan')
-            ->pluck('jurusan');
+        $jurusans = [];
+        if ($user->program_studi) {
+            $jurusans = [$user->program_studi];
+        } else {
+            $jurusans = Course::select('jurusan')
+                ->distinct()
+                ->whereNotNull('jurusan')
+                ->where('jurusan', '!=', '')
+                ->orderBy('jurusan')
+                ->pluck('jurusan');
+        }
 
         return Inertia::render('Student/CourseRegistration', [
             'courses' => $courses,
             'jurusans' => $jurusans,
-            'filters' => $request->only(['jurusan', 'angkatan']),
+            'userMajor' => $user->program_studi,
+            'filters' => $request->only(['jurusan', 'angkatan', 'semester']),
         ]);
     }
 
@@ -91,5 +101,21 @@ class StudentCourseController extends Controller
         $studentCourse->delete();
 
         return redirect()->back()->with('success', 'Mata kuliah berhasil dibatalkan.');
+    }
+
+    public function myCourses()
+    {
+        $courses = StudentCourse::with(['course.lecturer']) // Eager load course and lecturer
+            ->where('user_id', Auth::id())
+            ->get()
+            ->map(function ($studentCourse) {
+                $course = $studentCourse->course;
+                $course->ruangan = $studentCourse->ruangan; // Inject ruangan from StudentCourse
+                return $course;
+            });
+
+        return Inertia::render('Student/MyCourses', [
+            'courses' => $courses,
+        ]);
     }
 }

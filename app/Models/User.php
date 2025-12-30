@@ -57,4 +57,11 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+    /**
+     * Get the student courses for the user.
+     */
+    public function studentCourses()
+    {
+        return $this->hasMany(StudentCourse::class);
+    }
 }

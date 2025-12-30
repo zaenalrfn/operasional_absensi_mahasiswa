@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter }
 import { Label } from '@/components/ui/label';
 import type { BreadcrumbItem } from '@/types';
 import { ref } from 'vue';
+import { route } from 'ziggy-js';
 
 // The props structure changes because Laravel's groupBy returns an object/map keyed by semester
 const props = defineProps<{
@@ -25,9 +26,11 @@ const props = defineProps<{
         is_registered: boolean;
     }>>;
     jurusans: string[];
+    userMajor?: string;
     filters: {
         jurusan?: string;
         angkatan?: string;
+        semester?: string;
     };
 }>();
 
@@ -38,8 +41,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const selectedSemester = ref(1);
-const selectedJurusan = ref(props.filters.jurusan || '');
+const selectedSemester = ref(props.filters.semester || '1');
+const selectedJurusan = ref(props.userMajor || props.filters.jurusan || '');
 const selectedAngkatan = ref(props.filters.angkatan || '');
 
 const years = [2020, 2021, 2022, 2023, 2024, 2025];
@@ -48,6 +51,7 @@ const applyFilters = () => {
     router.get(route('student.course-registration'), {
         jurusan: selectedJurusan.value,
         angkatan: selectedAngkatan.value,
+        semester: selectedSemester.value,
     }, {
         preserveState: true,
         preserveScroll: true,
@@ -81,13 +85,12 @@ const unregister = (courseId: number) => {
 
             <!-- Filters -->
             <div class="bg-white p-6 rounded-lg shadow-sm mb-8 dark:bg-gray-800">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
                     <div>
                         <Label for="angkatan-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Angkatan</Label>
                          <select 
                             id="angkatan-select" 
                             v-model="selectedAngkatan" 
-                            @change="applyFilters"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         >
                             <option value="">Semua Angkatan</option>
@@ -101,7 +104,6 @@ const unregister = (courseId: number) => {
                          <select 
                             id="jurusan-select" 
                             v-model="selectedJurusan" 
-                            @change="applyFilters"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         >
                             <option value="">Semua Jurusan</option>
@@ -121,6 +123,11 @@ const unregister = (courseId: number) => {
                                 Semester {{ sem }}
                             </option>
                         </select>
+                    </div>
+                    <div>
+                        <Button @click="applyFilters" class="w-full bg-blue-600 hover:bg-blue-700">
+                            Tampilkan Mata Kuliah
+                        </Button>
                     </div>
                 </div>
             </div>

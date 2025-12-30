@@ -20,9 +20,13 @@ const props = defineProps<{
         kelas: string;
         semester: number;
     }>;
+    jurusans: string[];
+    classes: string[];
     filters: {
         semester?: string;
         angkatan?: string;
+        jurusan?: string;
+        kelas?: string;
     };
 }>();
 
@@ -35,11 +39,15 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const selectedAngkatan = ref(props.filters.angkatan || '');
 const selectedSemester = ref(props.filters.semester || '');
+const selectedJurusan = ref(props.filters.jurusan || '');
+const selectedKelas = ref(props.filters.kelas || '');
 
 const applyFilters = () => {
     router.get('/lecture/attendance', {
         angkatan: selectedAngkatan.value,
         semester: selectedSemester.value,
+        jurusan: selectedJurusan.value,
+        kelas: selectedKelas.value,
     }, {
         preserveState: true,
         preserveScroll: true,
@@ -58,7 +66,7 @@ const years = [2020, 2021, 2022, 2023, 2024, 2025];
 
             <!-- Filters -->
             <div class="bg-white p-6 rounded-lg shadow-sm mb-8 dark:bg-gray-800">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
                     <div>
                         <Label for="angkatan" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Angkatan</Label>
                          <select 
@@ -73,6 +81,19 @@ const years = [2020, 2021, 2022, 2023, 2024, 2025];
                         </select>
                     </div>
                     <div>
+                         <Label for="jurusan" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Jurusan</Label>
+                         <select 
+                            id="jurusan" 
+                            v-model="selectedJurusan" 
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        >
+                            <option value="">Semua Jurusan</option>
+                            <option v-for="jur in jurusans" :key="jur" :value="jur">
+                                {{ jur }}
+                            </option>
+                        </select>
+                    </div>
+                    <div>
                          <Label for="semester" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Semester</Label>
                          <select 
                             id="semester" 
@@ -82,6 +103,19 @@ const years = [2020, 2021, 2022, 2023, 2024, 2025];
                             <option value="" disabled>Pilih Semester</option>
                             <option v-for="sem in 8" :key="sem" :value="sem">
                                 Semester {{ sem }}
+                            </option>
+                        </select>
+                    </div>
+                    <div>
+                         <Label for="kelas" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Kelas</Label>
+                         <select 
+                            id="kelas" 
+                            v-model="selectedKelas" 
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        >
+                            <option value="">Semua Kelas</option>
+                            <option v-for="cls in classes" :key="cls" :value="cls">
+                                Kelas {{ cls }}
                             </option>
                         </select>
                     </div>

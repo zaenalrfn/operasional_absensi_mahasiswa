@@ -12,10 +12,22 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
+
+        if ($user->hasRole('mahasiswa')) {
+            return Inertia::render('Dashboard', [
+                'studentStats' => [
+                    'coursesTaken' => $user->studentCourses()->count(),
+                ],
+            ]);
+        }
+
         return Inertia::render('Dashboard', [
-            'totalStudents' => User::count(), // Assuming all users are students for now, or filter by role if needed
-            'totalCourses' => Course::count(),
-            'totalLectures' => Lectures::count(),
+            'adminStats' => [
+                'totalStudents' => User::role('mahasiswa')->count(),
+                'totalCourses' => Course::count(),
+                'totalLectures' => User::role('dosen')->count(), // Assuming lecturers are users with role 'dosen'
+            ],
         ]);
     }
 }

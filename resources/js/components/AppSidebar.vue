@@ -59,6 +59,11 @@ const allNavItems: NavItem[] = [
         href: '/student/course-registration',
         icon: ClipboardList,
     },
+    {
+        title: 'Mata Kuliah Saya',
+        href: '/student/my-courses',
+        icon: BookOpen,
+    },
 ];
 
 const mainNavItems = computed(() => {
@@ -81,7 +86,7 @@ const mainNavItems = computed(() => {
 
     if (roles.includes('mahasiswa')) {
         return allNavItems.filter(item => 
-            ['Dashboard', 'KRS (Mahasiswa)'].includes(item.title)
+            ['Dashboard', 'KRS (Mahasiswa)', 'Mata Kuliah Saya'].includes(item.title)
         );
     }
 
