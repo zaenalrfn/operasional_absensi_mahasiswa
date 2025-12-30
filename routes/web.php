@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/student/course-registration', [App\Http\Controllers\StudentCourseController::class, 'index'])->name('student.course-registration');
     Route::post('/student/course-registration', [App\Http\Controllers\StudentCourseController::class, 'store'])->name('student.course-registration.store');
     Route::delete('/student/course-registration/{course}', [App\Http\Controllers\StudentCourseController::class, 'destroy'])->name('student.course-registration.destroy');
+    Route::get('/student/my-courses', [App\Http\Controllers\StudentCourseController::class, 'myCourses'])->name('student.my-courses');
 });
 
 require __DIR__ . '/settings.php';

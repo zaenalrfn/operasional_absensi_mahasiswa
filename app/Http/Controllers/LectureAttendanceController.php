@@ -26,11 +26,25 @@ class LectureAttendanceController extends Controller
             $query->where('kode_mk', 'LIKE', "%-{$angkatanSuffix}");
         }
 
+        if ($request->filled('jurusan')) {
+            $query->where('jurusan', $request->jurusan);
+        }
+
+        if ($request->filled('kelas')) {
+            $query->where('kelas', $request->kelas);
+        }
+
         $courses = $query->get();
+
+        // Get unique jurusans and classes for dropdowns
+        $jurusans = Course::select('jurusan')->distinct()->whereNotNull('jurusan')->orderBy('jurusan')->pluck('jurusan');
+        $classes = Course::select('kelas')->distinct()->whereNotNull('kelas')->orderBy('kelas')->pluck('kelas');
 
         return Inertia::render('Lecture/Attendance/Index', [
             'courses' => $courses,
-            'filters' => $request->only(['semester', 'angkatan']),
+            'jurusans' => $jurusans,
+            'classes' => $classes,
+            'filters' => $request->only(['semester', 'angkatan', 'jurusan', 'kelas']),
         ]);
     }
 
