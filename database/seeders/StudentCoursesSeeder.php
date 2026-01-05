@@ -23,18 +23,26 @@ class StudentCoursesSeeder extends Seeder
         }
 
         foreach ($students as $student) {
-            foreach ($courses as $course) {
-                // Check if course matches student's jurusan and semester
-                if ($course->jurusan === $student->program_studi && $course->semester == $student->semester) {
-                    StudentCourse::create([
-                        'user_id' => $student->id,
-                        'course_id' => $course->id,
-                        'hari' => $course->hari,
-                        'jam_mulai' => $course->jam_mulai,
-                        'jam_selesai' => $course->jam_selesai,
-                        'ruangan' => 'Lab ' . rand(1, 5),
-                    ]);
-                }
+            // Get courses matching student's jurusan and semester
+            $availableCourses = $courses->filter(function ($course) use ($student) {
+                return $course->jurusan === $student->program_studi && $course->semester == $student->semester;
+            });
+
+            // Group by 'nama_mk' to ensure we pick only ONE class per subject
+            $groupedCourses = $availableCourses->groupBy('nama_mk');
+
+            foreach ($groupedCourses as $subjectName => $subjectClasses) {
+                // Pick one random class from the available classes (A-G)
+                $selectedCourse = $subjectClasses->random();
+
+                StudentCourse::create([
+                    'user_id' => $student->id,
+                    'course_id' => $selectedCourse->id,
+                    'hari' => $selectedCourse->hari,
+                    'jam_mulai' => $selectedCourse->jam_mulai,
+                    'jam_selesai' => $selectedCourse->jam_selesai,
+                    'ruangan' => 'Lab ' . rand(1, 5),
+                ]);
             }
         }
 

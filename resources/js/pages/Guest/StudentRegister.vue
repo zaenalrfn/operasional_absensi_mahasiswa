@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import InputError from '@/components/InputError.vue';
 import { Loader2 } from 'lucide-vue-next';
+import { route } from 'ziggy-js';
+
 
 defineProps<{
     jurusans: string[];

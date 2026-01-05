@@ -1,12 +1,20 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { BookOpen } from 'lucide-vue-next';
+import { 
+    DropdownMenu, 
+    DropdownMenuContent, 
+    DropdownMenuItem, 
+    DropdownMenuTrigger,
+    DropdownMenuSeparator,
+    DropdownMenuLabel
+} from '@/components/ui/dropdown-menu';
+import { BookOpen, ChevronDown, Check } from 'lucide-vue-next';
 import type { BreadcrumbItem } from '@/types';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps<{
     courses: Array<{
@@ -19,15 +27,8 @@ const props = defineProps<{
         sks: number;
         kelas: string;
         semester: number;
+        jurusan: string;
     }>;
-    jurusans: string[];
-    classes: string[];
-    filters: {
-        semester?: string;
-        angkatan?: string;
-        jurusan?: string;
-        kelas?: string;
-    };
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -37,24 +38,26 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const selectedAngkatan = ref(props.filters.angkatan || '');
-const selectedSemester = ref(props.filters.semester || '');
-const selectedJurusan = ref(props.filters.jurusan || '');
-const selectedKelas = ref(props.filters.kelas || '');
+const selectedCourseId = ref<number | ''>('');
 
-const applyFilters = () => {
-    router.get('/lecture/attendance', {
-        angkatan: selectedAngkatan.value,
-        semester: selectedSemester.value,
-        jurusan: selectedJurusan.value,
-        kelas: selectedKelas.value,
-    }, {
-        preserveState: true,
-        preserveScroll: true,
-    });
+const selectedCourseName = computed(() => {
+    if (!selectedCourseId.value) {
+        return 'Tampilkan Semua Mata Kuliah';
+    }
+    const course = props.courses.find(c => c.id === selectedCourseId.value);
+    return course ? `${course.nama_mk} - Kelas ${course.kelas}` : 'Tampilkan Semua Mata Kuliah';
+});
+
+const filteredCourses = computed(() => {
+    if (!selectedCourseId.value) {
+        return props.courses;
+    }
+    return props.courses.filter(course => course.id === selectedCourseId.value);
+});
+
+const selectCourse = (courseId: number | '') => {
+    selectedCourseId.value = courseId;
 };
-
-const years = [2020, 2021, 2022, 2023, 2024, 2025];
 </script>
 
 <template>
@@ -64,87 +67,101 @@ const years = [2020, 2021, 2022, 2023, 2024, 2025];
         <div class="p-6">
             <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Pilih Mata Kuliah</h2>
 
-            <!-- Filters -->
+            <!-- Simplified Filter -->
             <div class="bg-white p-6 rounded-lg shadow-sm mb-8 dark:bg-gray-800">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
-                    <div>
-                        <Label for="angkatan" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Angkatan</Label>
-                         <select 
-                            id="angkatan" 
-                            v-model="selectedAngkatan" 
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        >
-                            <option value="" disabled>Pilih Tahun Angkatan</option>
-                            <option v-for="year in years" :key="year" :value="year">
-                                Angkatan {{ year }}
-                            </option>
-                        </select>
-                    </div>
-                    <div>
-                         <Label for="jurusan" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Jurusan</Label>
-                         <select 
-                            id="jurusan" 
-                            v-model="selectedJurusan" 
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        >
-                            <option value="">Semua Jurusan</option>
-                            <option v-for="jur in jurusans" :key="jur" :value="jur">
-                                {{ jur }}
-                            </option>
-                        </select>
-                    </div>
-                    <div>
-                         <Label for="semester" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Semester</Label>
-                         <select 
-                            id="semester" 
-                            v-model="selectedSemester" 
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        >
-                            <option value="" disabled>Pilih Semester</option>
-                            <option v-for="sem in 8" :key="sem" :value="sem">
-                                Semester {{ sem }}
-                            </option>
-                        </select>
-                    </div>
-                    <div>
-                         <Label for="kelas" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Kelas</Label>
-                         <select 
-                            id="kelas" 
-                            v-model="selectedKelas" 
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        >
-                            <option value="">Semua Kelas</option>
-                            <option v-for="cls in classes" :key="cls" :value="cls">
-                                Kelas {{ cls }}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mt-4 flex justify-end">
-                    <Button @click="applyFilters" :disabled="!selectedAngkatan || !selectedSemester">
-                        Tampilkan Mata Kuliah
-                    </Button>
+                <div class="max-w-xl">
+                    <Label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        Pilih Mata Kuliah
+                    </Label>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                            <Button 
+                                variant="outline" 
+                                class="w-full justify-between text-left font-normal"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <BookOpen class="h-4 w-4" />
+                                    {{ selectedCourseName }}
+                                </span>
+                                <ChevronDown class="h-4 w-4 opacity-50" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent class="w-[500px] max-h-[400px] overflow-y-auto">
+                            <DropdownMenuLabel>Daftar Mata Kuliah</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem 
+                                @click="selectCourse('')"
+                                class="cursor-pointer"
+                            >
+                                <Check 
+                                    :class="[
+                                        'mr-2 h-4 w-4',
+                                        selectedCourseId === '' ? 'opacity-100' : 'opacity-0'
+                                    ]" 
+                                />
+                                Tampilkan Semua Mata Kuliah
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem 
+                                v-for="course in courses" 
+                                :key="course.id"
+                                @click="selectCourse(course.id)"
+                                class="cursor-pointer"
+                            >
+                                <Check 
+                                    :class="[
+                                        'mr-2 h-4 w-4',
+                                        selectedCourseId === course.id ? 'opacity-100' : 'opacity-0'
+                                    ]" 
+                                />
+                                <div class="flex flex-col">
+                                    <span class="font-medium">{{ course.nama_mk }}</span>
+                                    <span class="text-xs text-muted-foreground">
+                                        Kelas {{ course.kelas }} • Semester {{ course.semester }} • {{ course.jurusan }}
+                                    </span>
+                                </div>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        Pilih mata kuliah dari daftar di atas untuk memfilter tampilan.
+                    </p>
                 </div>
             </div>
 
-            <!-- Course Grid (Only shown if filters active) -->
-            <div v-if="filters.semester && filters.angkatan">
-                <div v-if="courses.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <Card v-for="course in courses" :key="course.id" class="hover:shadow-lg transition-shadow">
+            <!-- Course Grid -->
+            <div>
+                <div v-if="filteredCourses.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <Card v-for="course in filteredCourses" :key="course.id" class="hover:shadow-lg transition-shadow border-t-4 border-t-blue-500">
                         <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle class="text-sm font-medium">
-                                {{ course.kode_mk }}
-                            </CardTitle>
-                            <BookOpen class="h-4 w-4 text-muted-foreground" />
+                             <div class="space-y-1">
+                                <CardTitle class="text-base font-bold text-gray-800 dark:text-white">
+                                    {{ course.nama_mk }}
+                                </CardTitle>
+                                <p class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full inline-block">
+                                    {{ course.kode_mk }}
+                                </p>
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div class="text-2xl font-bold">{{ course.nama_mk }}</div>
-                            <p class="text-xs text-muted-foreground mt-1">
-                                Kelas {{ course.kelas }} - Semester {{ course.semester }}
-                            </p>
-                             <p class="text-xs text-muted-foreground">
-                                Dosen: {{ course.lecturer?.name }}
-                            </p>
+                            <div class="space-y-2 mt-2">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500">Kelas:</span>
+                                    <span class="font-medium">{{ course.kelas }}</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500">Semester:</span>
+                                    <span class="font-medium">{{ course.semester }}</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500">Jurusan:</span>
+                                    <span class="font-medium text-right truncate w-32 ml-2">{{ course.jurusan }}</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500">SKS:</span>
+                                    <span class="font-medium">{{ course.sks }}</span>
+                                </div>
+                            </div>
                         </CardContent>
                         <CardFooter>
                             <Link :href="route('lecture.attendance.show', course.id)" class="w-full">
@@ -157,9 +174,7 @@ const years = [2020, 2021, 2022, 2023, 2024, 2025];
                     Tidak ada mata kuliah ditemukan untuk filter ini.
                 </div>
             </div>
-             <div v-else class="text-center py-10 text-gray-400 italic">
-                Silakan pilih Angkatan dan Semester terlebih dahulu untuk melihat daftar mata kuliah.
-            </div>
+
         </div>
     </AppLayout>
 </template>
