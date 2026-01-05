@@ -3,6 +3,8 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import type { BreadcrumbItem } from '@/types';
+import { route } from 'ziggy-js';
+
 
 defineProps<{
     courses: Array<{

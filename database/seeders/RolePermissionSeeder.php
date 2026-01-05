@@ -42,17 +42,23 @@ class RolePermissionSeeder extends Seeder
             'user.delete',                   // Delete users (admin)
             'user.manage_roles',             // Manage roles (admin)
 
-            // Lecturer Permissions
-            'lecturer.view_any',             // View all lecturers
-            'lecturer.create',               // Create lecturers (admin)
-            'lecturer.update',               // Update lecturers (admin)
-            'lecturer.delete',               // Delete lecturers (admin)
+            // Lecture Permissions
+            'lecture.view_any',              // View all lectures
+            'lecture.create',                // Create lectures (admin)
+            'lecture.update',                // Update lectures (admin)
+            'lecture.delete',                // Delete lectures (admin)
 
             // Student Management Permissions
             'student.view_any',              // View all students (admin/dosen)
             'student.create',                // Create students (admin)
             'student.update',                // Update students (admin)
             'student.delete',                // Delete students (admin)
+
+            // Attendance Location Permissions
+            'attendance_location.view_any',
+            'attendance_location.create',
+            'attendance_location.update',
+            'attendance_location.delete',
 
             // Student Course Permissions (penting!)
             'student_course.view_own',
@@ -98,15 +104,20 @@ class RolePermissionSeeder extends Seeder
             'user.delete',
             'user.manage_roles',
 
-            'lecturer.view_any',
-            'lecturer.create',
-            'lecturer.update',
-            'lecturer.delete',
+            'lecture.view_any',
+            'lecture.create',
+            'lecture.update',
+            'lecture.delete',
 
             'student.view_any',
             'student.create',
             'student.update',
             'student.delete',
+
+            'attendance_location.view_any',
+            'attendance_location.create',
+            'attendance_location.update',
+            'attendance_location.delete',
 
             'report.view_attendance',
             'report.view_academic',
@@ -127,6 +138,7 @@ class RolePermissionSeeder extends Seeder
             'course.view_own',
             'student_course.view_own',
             'student_course.create',
+            'student_course.delete', // Allow deleting own course registration
 
             'user.view_own',
             'user.update',
@@ -139,7 +151,7 @@ class RolePermissionSeeder extends Seeder
             'attendance.view_any',
             'attendance.update',
             'attendance.verify',
-            'lecturer.view_any',
+            'lecture.view_any',
             'course.view_any',
             'student.view_any',
         ];

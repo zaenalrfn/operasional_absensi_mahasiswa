@@ -14,37 +14,31 @@ class LectureAttendanceController extends Controller
     public function index(Request $request)
     {
         $query = Course::with('lecturer')->latest();
+        $user = auth()->user();
 
-        if ($request->filled('semester')) {
-            $query->where('semester', $request->semester);
+        // If user is a lecturer, find their legacy Lecture ID using email
+        if ($user->hasRole('dosen')) {
+            $lecture = \App\Models\Lectures::where('email', $user->email)->first();
+            if ($lecture) {
+                $query->where('dosen_id', $lecture->id);
+            } else {
+                // If no legacy record found, show empty (or handle as needed)
+                $query->where('id', -1);
+            }
         }
 
-        if ($request->filled('angkatan')) {
-            // Extract last 2 digits of the year (e.g., "2023" -> "23")
-            $angkatanSuffix = substr($request->angkatan, -2);
-            // Filter where kode_mk ends with "-23"
-            $query->where('kode_mk', 'LIKE', "%-{$angkatanSuffix}");
-        }
-
-        if ($request->filled('jurusan')) {
-            $query->where('jurusan', $request->jurusan);
-        }
-
-        if ($request->filled('kelas')) {
-            $query->where('kelas', $request->kelas);
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_mk', 'LIKE', "%{$request->search}%")
+                    ->orWhere('kode_mk', 'LIKE', "%{$request->search}%");
+            });
         }
 
         $courses = $query->get();
 
-        // Get unique jurusans and classes for dropdowns
-        $jurusans = Course::select('jurusan')->distinct()->whereNotNull('jurusan')->orderBy('jurusan')->pluck('jurusan');
-        $classes = Course::select('kelas')->distinct()->whereNotNull('kelas')->orderBy('kelas')->pluck('kelas');
-
         return Inertia::render('Lecture/Attendance/Index', [
             'courses' => $courses,
-            'jurusans' => $jurusans,
-            'classes' => $classes,
-            'filters' => $request->only(['semester', 'angkatan', 'jurusan', 'kelas']),
+            'filters' => $request->only(['search']),
         ]);
     }
 
@@ -63,15 +57,25 @@ class LectureAttendanceController extends Controller
             ->values();
 
         // Get all attendance records for this course
-        $attendances = Attendence::where('course_id', $id)
+        // Get all unique dates for this course to map to "Meetings"
+        $groupByDate = Attendence::where('course_id', $id)
             ->orderBy('tanggal')
             ->get()
-            ->groupBy('tanggal');
+            ->groupBy(function ($attendance) {
+                return \Carbon\Carbon::parse($attendance->tanggal)->format('Y-m-d');
+            });
+
+        // Create a map of Date -> Meeting Number (1-based index)
+        // keys of $groupByDate are 'YYYY-MM-DD' sorted asc
+        $meetingDates = $groupByDate->keys()->values(); // List of dates ['2023-10-01', '2023-10-08', ...]
+
+        $attendances = $groupByDate; // Keep the group structure for easy lookup by date
 
         return Inertia::render('Lecture/Attendance/Show', [
             'course' => $course,
             'students' => $students,
-            'attendances' => $attendances
+            'attendances' => $attendances,
+            'meetingDates' => $meetingDates, // Pass this to help frontend map 'YYYY-MM-DD' <-> 1..14
         ]);
     }
 
