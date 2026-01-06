@@ -31,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('students', App\Http\Controllers\StudentController::class)->middleware(['role:admin|super-admin']);
 
     Route::resource('attendance-locations', App\Http\Controllers\AttendanceLocationController::class)->middleware(['role:admin|super-admin']);
+    Route::resource('app-versions', App\Http\Controllers\AppVersionController::class)->middleware(['role:admin|super-admin']);
 
     Route::get('/student/course-registration', [App\Http\Controllers\StudentCourseController::class, 'index'])->name('student.course-registration')->middleware(['permission:student_course.view_own']);
     Route::post('/student/course-registration', [App\Http\Controllers\StudentCourseController::class, 'store'])->name('student.course-registration.store')->middleware(['permission:student_course.create']);
