@@ -27,4 +27,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/attendances', [AttendanceController::class, 'index']);
     Route::post('/attendances', [AttendanceController::class, 'store']);
     Route::get('/attendance-locations', [\App\Http\Controllers\AttendanceLocationController::class, 'apiIndex']);
+    Route::post('/update-profile', [\App\Http\Controllers\Api\ProfileController::class, 'update']);
+    Route::post('/update-password', [\App\Http\Controllers\Api\ProfileController::class, 'updatePassword']);
+
 });
+
+// App Version / Updates public route (no auth needed usually, or maybe sanctum if preferred)
+Route::get('/app-versions', [\App\Http\Controllers\Api\AppVersionController::class, 'index']);
+Route::get('/check-update', [\App\Http\Controllers\Api\AppVersionController::class, 'checkUpdate']);

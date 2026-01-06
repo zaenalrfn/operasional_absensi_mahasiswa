@@ -14,7 +14,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, ClipboardCheck, ClipboardList, Folder, GraduationCap, LayoutGrid, MapPin, Users } from 'lucide-vue-next';
+import { BookOpen, ClipboardCheck, ClipboardList, Folder, GraduationCap, LayoutGrid, MapPin, Users, Smartphone } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 import { computed } from 'vue';
@@ -68,6 +68,11 @@ const allNavItems: NavItem[] = [
         title: 'Kehadiran',
         href: '/student/attendance',
         icon: ClipboardCheck,
+    },
+    {
+        title: 'App Versions',
+        href: '/app-versions',
+        icon: Smartphone,
     },
 ];
 
